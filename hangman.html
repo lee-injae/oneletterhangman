@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Letter Hangman</title>
+    <style>
+      body {
+        margin: 0;
+        text-align: center;
+      }
+      .init-letter {
+        color: white
+      }
+      .restart-btn {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container" id="container">
+      <h1 class="title">Welcome to the letter guessing game</h1>
+      <h2>Guess the hidden letter </h2>
+      <h3>you are given 5 chances</h3>
+      <h2 class="init-letter" id="init-letter">o</h2>
+      <input class="letter-input-box" type="text" id="guess-input"/>
+      <button class="check-btn btn" id="check-btn">check</button>
+      <h2 id="result-text"></h2>
+      <button class="restart-btn btn" id="restart-btn">restart</button>
+    </div>
+
+    <script>
+      /* 
+      Core features
+      1. Check Letter
+        a. edge cases: 
+         i. lettercase, 
+         ii. only one letter and alphabet only
+         iii. already typed letter
+        b.   
+      2. Create random letter with re/start of the game
+      3. Restart the game 
+      4.  
+
+      Stretch
+      1. more css - perhaps with hangman design..
+      2. create a word, instead of a letter
+      3. keep the record of an user by id, etc, or localstorage browser owner
+      4. convert to a react project 
+      */  
+      const initLetterInputEl = document.getElementById("init-letter-input")
+      const initLetterEl = document.getElementById("init-letter")
+      const guessInputEl = document.getElementById("guess-input")
+      const checkBtnEl = document.getElementById("check-btn")
+      const gameBoardEl = document.getElementById("gameboard")
+      const restartBtnEl = document.getElementById("restart-btn")
+      const initLetterValue = initLetterEl.innerText
+      let resultTextEl = document.getElementById("result-text")
+      let chanceNum = 5
+      let usedLettersArr = []
+
+      checkBtnEl.addEventListener("click", checkLetter)
+      restartBtnEl.addEventListener("click", restart)
+
+      function checkLetter(){
+          let guessWord = guessInputEl.value.toLowerCase()
+          if (guessWord.length != 1) {
+            const warningDiv = document.createElement("div")
+            warningDiv.innerText = "Please type one letter"
+            document.getElementById("container").append(warningDiv)
+            guessInputEl.value = ""
+            return 
+          }
+          if (initLetterValue === guessWord){
+            resultTextEl.innerText = "You guessed correctly, good job!"
+            initLetterEl.style.color = "purple"
+          } else if (usedLettersArr.includes(guessWord)) {
+            const warningDiv = document.createElement("div")
+            warningDiv.innerText = "You already tried this letter. please try a new one"
+            document.getElementById("container").append(warningDiv)
+            guessInputEl.value = ""
+          } else {
+            chanceNum--
+            guessInputEl.value = ""
+            if (chanceNum <= 0) {
+              resultTextEl.innerText = 
+                "the game is over"
+              restartBtnEl.style.display = "block"
+              checkBtnEl.disabled = true 
+            } else {
+              usedLettersArr.push(guessWord)
+              const usedLettersStr = usedLettersArr.join(", ")
+              resultTextEl.innerText = 
+              `please try again. You have ${chanceNum} more chances. 
+              \n letters used: ${usedLettersStr}`
+            }   
+          }
+      }
+
+    function generateNewLetter(){
+      let result = ""
+      const characters = "abcdefghijklmnopqrstuvwxyz"
+      const charactersLength = characters.length
+      result = characters.charAt(Math.floor(Math.random() * charactersLength))
+      console.log(result)
+      initLetterEl.innerText = result
+    }
+
+    function restart(){
+      guessInputEl.value = ""
+      usedLettersArr = []
+      initLetterEl.style.color = "white"
+      restartBtnEl.style.display = "none"
+      chanceNum = 5
+      resultTextEl.innerText = ""
+      generateNewLetter()
+      checkBtnEl.disabled = false
+
+    }
+
+    </script>
+  </body>
+</html>
